@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" /><meta charset="utf-8" /><title>
+	Quick Drycleaning Software
+</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" /><meta name="author" />
+    <!-- Le styles -->
+    <link href="../../css/login.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        .form-control
+        {
+            float: none !important;
+        }
+        .tempSize
+        {
+            height: 100px;
+            border: 1px solid gray;
+        }
+        #divCustomer .tt-dropdown-menu, #divBarcode .tt-dropdown-menu
+        {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        div#zohohc-asap-web-launcherbox
+        {
+            bottom: 10px;
+            right: 10px;
+        }
+        .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th
+        {
+            padding: 0px;
+            line-height: 1.42857143;
+            vertical-align: top;
+            border-top: 0px solid #ddd;
+        }
+        body, html
+        {
+            background-color: #F7F7F8 !important;
+            background-image: none !important;
+        }
+        
+        .dropdown-menu.dropdown-close.pull-right
+        {
+            right: 4px !important;
+            margin-top: 15px;
+        }
+        .btn-style-3
+        {
+            background-color: #101928 !important;
+            text-transform: uppercase;
+            font-size: 15px;
+            border-radius: 2px !important;
+        }
+        .list-style-3
+        {
+            padding: 11px 12px !important;
+        }
+        .pull-top
+        {
+            padding-top: 5px;
+            padding-bottom: 67px;
+        }
+    </style>
+    <!-- This is for inserting Navigation, for the time being turned off Vivek - 28 Nov 2012
+<style>
+body {
+  padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+</style>
+-->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+<script src="js/html5.js"></script>
+<![endif]-->
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="../../images/QDC.ico" /><link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../img/Logo144.png" /><link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../img/Logo144.png" /><link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../img/Logo72.png" /><link rel="apple-touch-icon-precomposed" href="../../img/Logo144.png" /><link href="../../css/ace.min-extend.css" rel="stylesheet" type="text/css" /><link href="../../css/bootstrap-extend.css" rel="stylesheet" type="text/css" /><link href="../../css/introjs.css" rel="stylesheet" type="text/css" /><link href="../../css/datepicker.css" rel="stylesheet" type="text/css" /><link href="../../css/HomeStyle.css" rel="stylesheet" type="text/css" /><link href="../../css/LeftsideMenu.css" rel="stylesheet" type="text/css" />
+    <!-- <script src="js/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="js/jquery-1.8.1.min.js" type="text/javascript"></script>-->
+    <script src="JavaScript/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <!-- <script type="text/javascript">
+
+         var sess_pollInterval = 60000;
+         var sess_expirationMinutes = 30;
+         var sess_warningMinutes = 1;
+         var sess_intervalID;
+         var sess_lastActivity;
+
+         function initSession() {
+             sess_lastActivity = new Date();
+             sessSetInterval();
+             $(document).bind('keypress.session', function (ed, e) {
+                 sessKeyPressed(ed, e);
+             });
+         }
+
+         function sessSetInterval() {
+             sess_intervalID = setInterval('sessInterval()', sess_pollInterval);
+         }
+
+         function sessClearInterval() {
+             clearInterval(sess_intervalID);
+         }
+
+         function sessKeyPressed(ed, e) {
+             sess_lastActivity = new Date();
+         }
+
+         function sessLogOut() {
+             window.location.href = '../Login.aspx';
+         }
+
+         function sessInterval() {
+             var now = new Date();
+             //get milliseconds of differneces 
+             var diff = now - sess_lastActivity;
+             //get minutes between differences
+             var diffMins = (diff / 1000 / 60);
+
+             if (diffMins >= sess_warningMinutes) {
+                 //wran before expiring
+                 //stop the timer
+                 sessClearInterval();
+                 //when session time off go log off directly             
+                 sessLogOut();
+             }
+         }
+</script>-->
+    <script type="text/javascript">
+        var PrinterServiceBaseURL = "http://127.0.0.1:9012/api/printservice/";
+        $(document).keydown(function (e) {
+
+            var tmpIsOverDueOrder = $('#hdnIsOverDueOrder').val().trim();
+            if (tmpIsOverDueOrder != 'True') {
+                if (e.which == 112) {
+                    //                var _meLoc = window.location + '';
+                    //                var _index = _meLoc.lastIndexOf('/');
+                    //                var _baseUrl = _meLoc.slice(0, _index);
+                    //                var _bookingURL = _baseUrl + '/New_Booking/frm_New_Booking.aspx';
+                    //                window.location = _bookingURL;
+                }
+                else if (e.which == 115) {                    
+                    if ($('#hdnIsRoyaltyDue').val().trim() == 'True') {
+                        return false;
+                    }
+                    
+                    if (!checkAccessRights('Edit Order'))
+                    { return false; }
+                    var today = new Date().toLocaleString();
+                    var _meLoc = window.location + '';
+                    var _index = _meLoc.lastIndexOf('/');
+                    var _baseUrl = _meLoc.slice(0, _index);
+                    var _bookingURL = _baseUrl + '/Bookings_New/frmbooking.aspx?option=Edit' + '&ClearContent=' + today + '';
+                    window.location = _bookingURL;
+                }
+                //            else if (e.which == 119) {
+                //                var IsAllow = checkAccessRights('Super Admin')
+                //                if (IsAllow == false) {
+                //                    return false;
+                //                }
+                //                var _meLoc = window.location + '';
+                //                var _index = _meLoc.lastIndexOf('/');
+                //                var _baseUrl = _meLoc.slice(0, _index);
+                //                var _bookingURL = _baseUrl + '/Bookings_New/frmbooking.aspx?AdminRight=Right';
+                //                window.location = _bookingURL;
+                //            }
+                else if (e.which == 120) {
+                                    
+                    if ($('#hdnIsRoyaltyDue').val().trim() == 'True') {
+                        return false;
+                    }
+
+                    var _meLoc = window.location + '';
+                    var _index = _meLoc.lastIndexOf('/');
+                    var _baseUrl = _meLoc.slice(0, _index);
+                    var _bookingURL = _baseUrl + '/Bookings_New/frmDeliveryNew.aspx?BN=';
+                    window.location = _bookingURL;
+                    e.preventDefault();
+                }
+                else if ((e.which == 72 || e.which == 104) && e.ctrlKey) {
+                    window.location = "home.html";
+                    return false;
+                }
+            }
+
+        });
+    </script>
+    <script type="text/javascript">
+        function checkAccessRights(argPageToCheck) {
+            var isAllowed = false;
+            $.ajax({
+                url: 'Autocomplete.asmx/checkAcsRights',
+                type: 'GET',
+                data: "pageTitle='" + argPageToCheck + "'",
+                timeout: 20000,
+                contentType: 'application/json; charset=UTF-8',
+                datatype: 'JSON',
+                cache: true,
+                async: false,
+                success: function (response) {
+                    var _val = response.d;
+                    if (_val == true) {
+                        isAllowed = _val;
+                    }
+                    else {
+                        //                        var _html = '<div class="row-fluid" id="addedRowFluid"><div class="span4 offset4"><div class="label label-important large aligncenter"> <h4 style="color:Red"> <i class="icon-remove-sign icon-white"></i>&nbsp;You are not authorised !</h4></div></div></div>';
+                        //                        $('#addedRowFluid').remove();
+                        //                        $('#divHeader').after(_html);
+                        stateOfColor = true;
+                        setDivMouseOver('Red', '#999999', stateOfColor)
+                        $('#lblMsg').text('You are not authorised !');
+                    }
+                },
+                error: function (response) {
+                }
+
+            });
+            return isAllowed;
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            //  showControl();           
+            var stateOfColor = true;
+            $("#txtCustomer").focus();
+            CheckRoyaltyEnable();
+            $.ajax({
+                url: 'AutoComplete.asmx/GetStoreDetails',
+                type: 'GET',
+                data: " ",
+                timeout: 20000,
+                contentType: 'application/json; charset=UTF-8',
+                datatype: 'JSON',
+                cache: true,
+                async: false,
+                success: function (response) {
+                    var resultData = response.d;
+                    var aryStoreData = resultData.split(':');
+                    $('#lblStoreName').text(aryStoreData[0]);
+                    //   $('#lblStoreAddress').text(aryStoreData[1]);
+                    $('#lblUserName').text(aryStoreData[2]);
+                    $('#hdnBranchID').val(aryStoreData[3].trim());
+                    if (aryStoreData[4].trim() === 'India Standard Time') {
+                        // $('#divGetStart').hide();
+                        //  $('#divEvent').show();
+                    }
+                    else {
+                        // $('#divGetStart').show();
+                        //  $('#divEvent').hide();
+                    }
+                },
+                error: function (response) {
+                    //  alert(response.toString())
+                }
+            });
+
+            //            $('#txtCustomer').keydown(function (event) {
+            //                if (event.which == 13) {
+
+            //                    var IsAllow = checkAccessRights('Add New')
+            //                    if (IsAllow == false) {
+            //                        return false;
+            //                    }
+
+            //                    setTimeout(function () {
+            //                        ShowCustData();
+            //                    }, 500);
+            //                    return false;
+
+            //                }
+            //            });
+        });
+
+        function ShowCustData() {
+
+            $("#lblMsg").text('');
+            $('#divShowMsg').hide();
+            var CustCode = $('#txtCustomer').val();
+            var CustCode1 = CustCode.split("-");
+
+            $('#hdncustBookingCode').val(CustCode1[0]);
+
+            if ($('#hdnIsBookingNo').val().trim() == "1") {
+                var status = CheckBooking();
+                if (status == false) {
+                    $("#txtCustomer").focus();
+                    return false;
+                }
+                return false;
+            }
+
+            if (CustCode === "") {
+                stateOfColor = true;
+                setDivMouseOver('Red', '#999999', stateOfColor);
+                $("#lblMsg").text('Kindly select a customer');
+                $("#txtCustomer").focus();
+            }
+            else {
+
+                if ($('#hdnIsDirectOrderCreationOpen').val().trim() == 'False') {
+                    $('#lblCustomerInfo').html(CustCode1[1].trim());
+                    $('#AddToOrder').modal({ backdrop: 'static', keyboard: false });
+                    return false;
+                }
+
+                if (CustCode1.length == 1) {
+                    window.open('New_admin/frmNewCustomer.aspx?CName=' + CustCode + '', '_self');
+                    return false;
+                }
+                else {
+                    // $('#txtCustomer').val('');
+
+                    if (localStorage['bowserVersion'] == undefined) {
+                        var Allbrowsername = JSON.stringify(bowser, null, '    ');
+                        localStorage['bowserVersion'] = parseFloat(JSON.parse(Allbrowsername).version.trim());
+                    }
+
+                    var Condition = "";
+                    if (parseFloat(localStorage['bowserVersion'].trim()) >= 48) {
+                        Condition = CustCode1[0].trim().includes("Cust");
+                    }
+                    else {
+                        Condition = CustCode1[0].trim().contains("Cust");
+                    }
+
+                    if (Condition) {
+                        // analytics.feature("Search", "Customer", "QDC");
+                        $('#txtCustomer').val(CustCode1[1].trim());
+                        if ($('#hdnIsDirectToBooking').val().trim() == 'true') {
+                            window.open('Bookings_New/frmbooking.aspx?CustBN=' + CustCode1[0].trim() + '&IsTour=' + $('#hdnIsDeliverTour').val() + $('#hdnClearContentQString').val() + '', '_self');
+                        }
+                        else {
+                            window.open('new_admin/CustomerDashboard.aspx?CCode=' + CustCode1[0].trim() + '&IsTour=' + $('#hdnIsDeliverTour').val() + $('#hdnClearContentQString').val() + '', '_self');
+                        }
+                    }
+                    else {
+                        var status = CheckBooking();
+                        if (status == false) {
+                            $("#txtCustomer").focus();
+                            return false;
+                        }
+                        return false;
+                    }
+                }
+            }
+
+        }
+
+        function checkIfBookingCancel(argBookingNumber) {
+            var result1 = '';
+            $.ajax({
+                url: 'Autocomplete.asmx/checkBookingNoCalcel',
+                data: "bookingNumber='" + argBookingNumber[0] + "'&BID='" + argBookingNumber[2] + "'",
+                type: 'GET',
+                datatype: 'JSON',
+                contentType: 'application/json; charset=utf8',
+                async: false,
+                timeout: 5000,
+                success: function (response) {
+                    result1 = response.d;
+                },
+                error: function (response) {
+
+                }
+            });
+            return result1;
+        }
+        function checkIfBookingExists(argBookingNumber) {
+            var result = '';
+            $.ajax({
+                url: 'Autocomplete.asmx/FindBookingNumber',
+                data: "bookingNumber='" + argBookingNumber[0] + "'&BID='" + argBookingNumber[2] + "'",
+                type: 'GET',
+                datatype: 'JSON',
+                contentType: 'application/json; charset=utf8',
+                async: false,
+                timeout: 5000,
+                success: function (response) {
+                    result = response.d;
+                },
+                error: function (response) {
+                    result = 'false';
+                }
+            });
+            return result;
+        }
+
+        function CheckBooking() {
+
+            //            var IsAllow = checkAccessRights('Search Invoice')
+            //            if (IsAllow == false) {
+            //                return false;
+            //            }
+            var strBarCode = $("#txtBarcode").val().trim();
+            if (strBarCode == "") {
+                $("#txtBarcode").focus();
+                stateOfColor = true;
+                setDivMouseOver('Red', '#999999', stateOfColor);
+                $('#lblMsg').text('Kindly enter order number or barcode');
+                return false;
+            }
+
+            var BookingNo = $('#txtBarcode').val().toUpperCase();
+            var aryBookingNo = [];
+            aryBookingNo = BookingNo.split("-");
+            var Len = aryBookingNo.length;
+            if (Len == 1 || Len == 2) {
+
+                if (Len == 2) {
+                    if ($('#hdnBranchID').val() != aryBookingNo[1].trim()) {
+                        stateOfColor = true;
+                        setDivMouseOver('Red', '#999999', stateOfColor)
+                        $('#lblMsg').text('Order Not Available.');
+                        $('#txtBarcode').val('');
+                        return false;
+                    }
+                    else {
+                        $('#txtBarcode').val(aryBookingNo[0].trim());
+                    }
+                }
+                var bkCancel = checkIfBookingCancel(aryBookingNo);
+                if (bkCancel != 5) {
+                    var bkExists = checkIfBookingExists(aryBookingNo);
+                    if (bkExists === "false") {
+                        stateOfColor = true;
+                        setDivMouseOver('Red', '#999999', stateOfColor)
+                        $('#lblMsg').text('Order Not Available.');
+                        $('#txtBarcode').val('');
+                        return false;
+                    }
+                    else {
+                        window.open('Bookings_New/frmDeliveryNew.aspx?BN=' + $('#txtBarcode').val().trim() + $('#hdnClearContentQString').val() + '', '_self');
+                        $('#txtBarcode').val('');
+                        $('#lblMsg').text('');
+                        return false;
+                    }
+                }
+                else {
+                    stateOfColor = true;
+                    setDivMouseOver('#00aa00', '#999999', stateOfColor);
+                    $('#lblMsg').text('This booking number  is cancelled');
+                    return false;
+                }
+            }
+            else {
+                stateOfColor = true;
+                setDivMouseOver('Red', '#999999', stateOfColor)
+                $('#lblMsg').text('Please enter valid input for search');
+                $('#txtBarcode').val('');
+                return false;
+            }
+        }
+    </script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#hdnControlWidth').val($('#txtCustomer').width() - 42);
+            $('#hdndrpFilterWidth').val($('#drpDefaultCustomerSearch').width());
+            //   showAllHomeCustomer('#txtCustomer');
+            ShowCustomerDetailsHomeScreen('#txtCustomer');
+            ShowBookingDetailsHomeScreen('#txtBarcode');
+
+            $("#rdbCustomer,#rdbInvoice").click(function (e) {
+                showControl();
+            });
+
+
+            $('#btnOrderPerPieces').on('click', function (e) {
+                e.preventDefault();
+                var today = new Date().toLocaleString();
+                window.location.href = 'Bookings_New/frmbooking.aspx?CustBN=' + $('#hdncustBookingCode').val().trim() + '&ClearContent=' + today;
+            });
+
+            $('#btnOrderPerWeight').on('click', function (e) {
+                e.preventDefault();
+                var today = new Date().toLocaleString();
+                window.location.href = 'Bookings_New/LaundryBooking.aspx?CustBN=' + $('#hdncustBookingCode').val().trim() + '&ClearContent=' + today;
+
+            });
+
+            $('#btnDashboard').on('click', function (e) {
+                e.preventDefault();
+                var today = new Date().toLocaleString();
+                window.location.href = 'new_admin/CustomerDashboard.aspx?CCode=' + $('#hdncustBookingCode').val().trim() + '&ClearContent=' + today;
+            });
+        });
+
+    </script>
+    <script type="text/javascript">
+
+        function setDivMouseOver(argColorOne, argColorTwo, stateOfColor) {
+            document.getElementById('divShowMsg').style.display = "inline";
+
+            if (stateOfColor) {
+                //$('#DivContainerInnerStatus').animate({ backgroundColor: argColorOne }, 200).delay(1000).animate({ backgroundColor: argColorTwo }, 100);
+
+                $('#DivContainerInnerStatus').css('backgroundColor', argColorOne);
+
+
+            }
+            else {
+                $('#DivContainerInnerStatus').animate({ backgroundColor: argColorTwo }, 1000);
+                $('#DivContainerInnerStatus').animate({ backgroundColor: argColorOne }, 100);
+            }
+            stateOfColor = !stateOfColor;
+            setTimeout(function () { $('#divShowMsg').fadeOut(3000); }, 4000);
+        }       
+
+    </script>
+</head>
+<body>
+    <table class="table" style="margin-bottom: 0px">
+        <tr>
+            <td style="margin: 0px; padding: 0px">
+                <div id="divSubMenu" class="submenuHome">
+                    <div class="nav_new">
+                        <ul>
+                            <li class=""><a id="achrHome" href="home.html" class="padding6"><i class="fa fa-home fa-3x">
+                            </i>
+                                <br />
+                                <span>&nbsp;&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;&nbsp;<br />
+                                    (Ctrl+H)</span></a></li>
+                            <li class="" id="liDashboard" style="display: none;"><a id="achrNewDashboard" href="Bookings_New/frmDashBoard.aspx"
+                                class="padding6" onclick="return checkAccessRights('Allow user to access analytics dashboard')">
+                                <i class="fa fa-tachometer fa-3x"></i>
+                                <br />
+                                <span>Dashboard<br />
+                                    <span class="textRed2"></span></span></a></li>
+                            <li class=""><a id="achrNewCustomer" href="New_Admin/frmNewCustomer.aspx" class="padding6"
+                                onclick="return checkAccessRights('Add New')"><i class="fa fa-user fa-3x"></i>
+                                <br />
+                                <span>&nbsp;Customer&nbsp;</span></a></li>
+                            <li class="" style="display: none"><a href="" class="padding6" onclick="return checkAccessRights('New Order')">
+                                <i class="fa fa-download fa-3x"></i>
+                                <br />
+                                <span>&nbsp;Drop&nbsp;(F1)&nbsp;</span></a></li>
+                            <li class=""><a id="achrOrderReport" href="Reports/OrderReport.aspx" class="padding6"
+                                onclick="return checkAccessRights('Orders')"><i class="fa fa-bar-chart-o fa-3x">
+                                </i>
+                                <br />
+                                <span>&nbsp;Reports&nbsp;</span></a></li>
+                            <li class=""><a id="achrSetup" href="New_Admin/frmReceipt.aspx" class="padding6"
+                                onclick="return checkAccessRights('Set Up')"><i class="fa fa-cogs fa-3x"></i>
+                                <br />
+                                <span>&nbsp;&nbsp;Set&nbsp;Up&nbsp;&nbsp;</span></a></li>
+                            <li class=""><a id="achrSupport" href="https://support.quickdrycleaning.com/portal/en/home"
+                                target="_blank" class="padding6"><i class="fa fa-question-circle fa-3x"></i>
+                                <br />
+                                <span>&nbsp;&nbsp;&nbsp;&nbsp;Support&nbsp;&nbsp;&nbsp;&nbsp;</span></a></li>
+                            <li class=""><a id="btnSubsPlan" href="Admin/StoreSubscription.aspx" onclick="return checkAccessRights('Subscription')"
+                                target="_blank" class="padding6"><i class="fa fa-list fa-3x" style="font-size: 28px;">
+                                </i>
+                                <br />
+                                <span>&nbsp;&nbsp;Subscription&nbsp;&nbsp;</span></a></li>
+                            <li class=""><a id="A7" href="Admin/WhatsAppChatwindows.aspx" onclick="return checkAccessRights('Growth Mate Engage (Live Agent)')"
+                                target="_blank" class="padding6">
+                                <img src="img/WhatsappIcon.png" width="30px;" />
+                                <br />
+                                <span>&nbsp;&nbsp;Live Agent&nbsp;&nbsp;</span></a></li>
+                            <li class="" style="display: none"><a href="LiveChat.htm" class="padding6"><i class="fa fa-weixin fa-3x">
+                            </i><span>&nbsp;&nbsp;Live&nbsp;Chat&nbsp;&nbsp;</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </td>
+            <td style="width: 100%">
+                <div class="row-fluid">
+                    <div class="" style="border-radius: 0px; line-height: 50px; border-bottom: 1px solid #c6c4c4;">
+                        <div class=" Textpadding" style="background-color: white; border-radius: 0px;">
+                            <div class="navbar-header">
+                                <button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle"
+                                    type="button" style="background-color: #579EC8">
+                                    <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span><span
+                                        class="icon-bar"></span><span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="navbar-collapse collapse">
+                                <div class="col-sm-6 Textpadding" style="padding-top: 5px">
+                                    <img src="img/QDC60.png" id="imgLogo" class="nav-user-photo" width="60px" height="40px" />
+                                    <span id="lblStoreName" class="fa-lg" style="color: Gray;"></span>
+                                </div>
+                                <!-- <div class="col-sm-4 text-center textBold" style="padding-top: 10px;">
+                                   
+                                </div>-->
+                                <div class="col-sm-6 Textpadding">
+                                    <ul class="nav navbar-nav" style="float: right; background-color: white;">
+                                        <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown" style="padding-top: 5px;
+                                            padding-bottom: 5px; background-color: white;">
+                                            <!--<img src="img/User2.png" id="imgUser" height="30px"  class="nav-user-photo" />-->
+                                            <i class="fa fa-user fa-2x" style="color: Gray; font-size: 21px; margin-top: 9px;">
+                                            </i>&nbsp;<i class="caret"></i></a>
+                                            <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close"
+                                                style="width: 200px;">
+                                                <li class="Textpadding" style="text-align: center; border-bottom: 1px solid #c6c4c4;">
+                                                    <span class="user-info nopadding"><small>Hi, </small><span id="lblUserName" class="textBold">
+                                                    </span></span></li>
+                                                <!-- <li class="Textpadding" style="text-align: left; border-bottom: 1px solid #c6c4c4;
+                                                    line-height: 21px; padding: 6px 10px;">
+                                                    <div >
+                                                        Subssciption:
+                                                    </div>
+                                                    <div style="color: gray; padding-left: 10px;">
+                                                        Ultimate - Monthly</div>
+                                                    <div style="color: gray; padding-left: 10px;">
+                                                        Next Renewal : 20 aug 2021</div>
+                                                </li>-->
+                                                <li class="Textpadding"><a href="/superadmin/Login.aspx" class="list-style-3" id="a3"
+                                                    onmouseover="style.backgroundColor='#f1f1f1'" onmouseout="style.backgroundColor='white'">
+                                                    <i class="fa fa-sign-in textBold"></i>&nbsp;&nbsp;Superadmin Login</a></li>
+                                                <li id="liSubs" class="Textpadding" style="border-bottom: 1px solid #c6c4c4;"><a
+                                                    href="Admin/StoreSubscription.aspx" onclick="return checkAccessRights('Subscription')"
+                                                    class="list-style-3" id="brnSubs" onmouseover="style.backgroundColor='#f1f1f1'"
+                                                    onmouseout="style.backgroundColor='white'"><i class="fa fa-list textBold"></i>&nbsp;&nbsp;Subscription
+                                                    Plan </a></li>
+                                                <li class="Textpadding"><a href="https://support.quickdrycleaning.com/portal/en/kb/articles/what-s"
+                                                    class="list-style-3" id="a6" onmouseover="style.backgroundColor='#f1f1f1'" onmouseout="style.backgroundColor='white'"
+                                                    target="_blank"><i class="fa fa-external-link  textBold"></i>&nbsp;&nbsp;What's
+                                                    New</a></li>
+                                                <li class="Textpadding"><a href="https://support.quickdrycleaning.com/" class="list-style-3"
+                                                    id="a8" onmouseover="style.backgroundColor='#f1f1f1'" onmouseout="style.backgroundColor='white'"
+                                                    target="_blank"><i class="fa fa-question-circle textBold"></i>&nbsp;&nbsp;Help</a></li>
+                                                <li class="Textpadding"><a href="Masters/ChangePassword.aspx" onclick="return checkAccessRights('Change Password')"
+                                                    class="list-style-3" id="achrChangePwd" onmouseover="style.backgroundColor='#f1f1f1'"
+                                                    onmouseout="style.backgroundColor='white'"><i class="fa fa-cog textBold"></i>&nbsp;&nbsp;Change
+                                                    Password </a></li>
+                                                <!--<li class="Textpadding"><a href="help.html" target="_blank" onmouseover="style.backgroundColor='#f1f1f1'" class="list-style-3"
+                                                    onmouseout="style.backgroundColor='white'"><i class="fa fa-question-circle icon-white textBold">
+                                                    </i>&nbsp;&nbsp;Help</a> </li>-->
+                                                <li class="Textpadding"><a href="#" id="btnLogOut" onmouseover="style.backgroundColor='#f1f1f1'"
+                                                    class="list-style-3" onmouseout="style.backgroundColor='white'"><i class="fa fa-power-off textBold">
+                                                    </i>&nbsp;&nbsp;Log Out</a> </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                    <div id="div1" style="float: right; background-color: white; margin-right: 30px;
+                                        line-height: 14px; margin-top: 13px;">
+                                        <a href="https://support.quickdrycleaning.com/portal/en/kb/articles/what-s"
+                                            style="color: gray; text-decoration: none;" target="_blank" id="achrRelease1"><i
+                                                class="fa fa-bell" style="font-size: 19px; margin-top: 3px;"></i>
+                                            <!-- <div style="font-size: 11px; color: #f18b8b;margin-top:3px;">14 new features </div>-->
+                                        </a>
+                                    </div>
+                                    <div id="div3" style="float: right; background-color: white; margin-right: 11px;
+                                        line-height: 14px; margin-top: 10px;">
+                                        <a href="Admin/WhatsappBalanceCredit.aspx" style="color: gray; text-decoration: none;"
+                                            target="_blank" id="bntWhatsApp"><span style="font-size: 13px; color: #33c82e;">
+                                            </span>
+                                            <img src="img/WhatsappIcon.png" width="30px;" /></a>
+                                    </div>
+                                     <div id="divOrderCount" style="float: right; background-color: rgba(40, 167, 69, 0.08); margin-right: 11px;
+                                        line-height: 20px; margin-top: 6px; display: none; padding: 8px 15px; border: 1px solid rgba(40, 167, 69, 0.3); border-radius: 4px;">
+                                        <i class="fa fa-cube" style="color: #28a745; font-size: 20px; "></i>                                      
+                                        <span style="font-size: 20px; color: #333; font-weight: 600; margin-left: 3px;" id="divOrderCountText">0</span>
+                                        <a href="javascript:void(0);" style="color: #28a745; text-decoration: underline; margin-left: 10px; font-size: 14px;"
+                                            id="btnOrderCount">Refill</a>
+                                    </div>
+                                    
+                                    <!-- Order Limit Modal -->
+                                    <div id="orderLimitModal" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
+                                        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 600px; margin-top: 10%;">
+                                            <div class="modal-content" style=" border-radius: 8px; border: none;">
+                                                <div class="modal-header" style="border-bottom: none; padding: 30px 30px 20px 30px; position: relative;">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position: absolute; top: 15px; right: 20px; color: #ada2a2; opacity: 1; font-size: 24px; background: none; border: none; cursor: pointer;">
+                                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                                    </button>
+                                                    <h3 class="modal-title" style="font-weight: bold; font-size: 28px; margin: 0; padding-right: 40px;">Want to add more orders?</h3>
+                                                </div>
+                                                <div class="modal-body" style="padding: 20px 30px 30px 30px;">
+                                                    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+                                                        To add more orders, please contact our Customer Support team.
+                                                    </p>
+                                                    <p style="font-size: 18px; font-weight: 600; margin-bottom: 0;">
+                                                        Support: <span style="color: #48bb78;">+91 98107-55331</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="divLiveMode" style="float: right; background-color: white; margin-right: 30px;
+                                        display: none">
+                                        <!-- <i class="fa fa-check-circle" style="color: green; font-size: 15px;"></i>&nbsp;<span
+                                            style="color: gray;">Live Mode</span>-->
+                                    </div>
+                                    <ul id="divTestMode" class="nav navbar-nav" style="float: right; background-color: white;
+                                        margin-right: 11px; display: none">
+                                        <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown" style="padding-top: 10px;
+                                            padding-bottom: 5px; background-color: white; color: gray"><i class="fa fa-info-circle"
+                                                style="color: #ffbb00; font-size: 15px;"></i>&nbsp;<span>Trial</span>&nbsp;<i class="caret"></i>
+                                            <div style="font-size: 11px; color: #f18b8b; margin-top: -3px;" id="divTrialDaysLeft">
+                                            </div>
+                                        </a>
+                                            <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close"
+                                                style="margin-top: 4px;">
+                                                <!--<li class="Textpadding" style="text-align: left; border-bottom: 1px solid #c6c4c4;">
+                                                    <a href="#" id="A3" onmouseover="style.backgroundColor='#f1f1f1'" class="list-style-3"
+                                                        onmouseout="style.backgroundColor='white'"><i class="fa fa-info-circle" style="color: #ffbb00;
+                                                            font-size: 15px;"></i>&nbsp;<span>Trial</span>
+                                                       
+                                                    </a></li>-->
+                                                <li class="Textpadding" style="text-align: left; border-bottom: 1px solid #c6c4c4;">
+                                                    <a href="admin/StoreSubscription.aspx?TrialToLive=True" target="_blank" id="A4" onmouseover="style.backgroundColor='#f1f1f1'"
+                                                        class="list-style-3" onmouseout="style.backgroundColor='white'"><i class="fa fa-check-circle"
+                                                            style="color: green; font-size: 15px;"></i>&nbsp;<span>GO Live</span> </a>
+                                                </li>
+                                                <li class="Textpadding" style="text-align: left;"><a href="https://www.quickdrycleaning.com"
+                                                    target="_blank" id="A5" onmouseover="style.backgroundColor='#f1f1f1'" class="list-style-3"
+                                                    onmouseout="style.backgroundColor='white'"><i class="fa fa-comments" style="color: gray;
+                                                        font-size: 15px;"></i>&nbsp;<span>Talk to Sales</span> </a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                    <!-- <a id="lnkSuperAdmin" href="/superadmin/Login.aspx" style="margin-top: 10px; float: left; margin-left: 10px; color: Yellow; font-size: 14px">
+                                            Login to super admin</a>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <div id="divHeader">
+                    </div>
+                </div>
+                <div class="div-margin">
+                    <div class="row-fluid">
+                        <div class="col-sm-12">
+                            <div class="row-fluid">
+                                <div id="divShowBar" style="display: none; margin: 0px; padding: 8px" class="alert alert-dismissible fa-lg text-center"
+                                    role="alert">
+                                    <button type="button" id="btnBarClose" style="margin-right: 20px;" class="close"
+                                        data-dismiss="alert">
+                                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <span id="spnShowInfo"></span>
+                                </div>
+                                <div id="divShowSMSBar" style="display: none; margin: 0px; padding: 5px" class="alert alert-dismissible"
+                                    role="alert">
+                                    <span id="spnShowSMSInfo"></span>
+                                </div>
+                                <div id="divShowPickUpMsg" style="display: none; margin: 0px; padding: 9px;" class="alert alert-info text-center"
+                                    role="alert">
+                                    <button type="button" id="btnPickUpClose" class="close" data-dismiss="alert">
+                                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <span id="spnShowPickUpMsg"></span>
+                                </div>
+                                <div id="divOrderAgeOverDue" style="display: none; margin: 0px; padding: 7px; font-size: 16px;"
+                                    class="alert alert-danger text-center" role="alert">
+                                    <button type="button" id="Button5" class="close" data-dismiss="alert">
+                                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <span id="spnOrderAgeOverDue"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="col-sm-12">
+                            <div id="divShowSMSPurchaseBar" style="display: none; margin: 2px 0px px 0px; padding: 8px 5px"
+                                class="alert alert-danger nomargin fa-lg text-center" role="alert">
+                                <button type="button" style="margin-right: 20px; margin-top: -5px;" id="Button4"
+                                    class="close" data-dismiss="alert">
+                                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                <span id="spnShowSMSPurchase"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <div class="row-fluid">
+                        <div class="col-sm-2">
+                        </div>
+                        <div class="col-sm-8 whitebox3">
+                            <div class="row-fluid text-center">
+                                <!--<br />
+                          <span class="textBold hometxtcolor">Search Customer (Name, Address, Mobile Number, Membership
+                                                id or customer id) <SPAN style="color:Black">OR</SPAN> Order number</span>   -->
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-sm-1">
+                                </div>
+                                <div class="col-sm-10">
+                                    <div class="row-fluid">
+                                        <div class="col-sm-12">
+                                            <div style="text-align: left">
+                                                <label>
+                                                    <input id="rdbCustomer" type="radio" checked="checked" name="SearchData" class="ace" />
+                                                    <span class="lbl hometxtcolor">&nbsp;Search Customer (Name, Address, Mobile Number,
+                                                        Membership id or customer id)</span>
+                                                </label>
+                                            </div>
+                                            <div style="text-align: left">
+                                                <label>
+                                                    <input id="rdbInvoice" type="radio" name="SearchData" class="ace" />
+                                                    <span class="lbl hometxtcolor">&nbsp;Search Invoice</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row-fluid div-margin">
+                                        <div class="col-sm-12 ">
+                                            <div id="divCustomer">
+                                                <div class="row-fluid">
+                                                    <div class="col-sm-3 Textpadding">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon IconBkColor"><i class="fa fa-search icon-white fa-lg">
+                                                            </i></span>
+                                                            <select id="drpDefaultCustomerSearch" class="form-control" style="height: 42px; border-top-right-radius: 0px;
+                                                                border-bottom-right-radius: 0px; padding-left: 2px  !important; padding-right: 2px  !important;">
+                                                                <option selected="selected" value="All">Search All</option>
+                                                                <option value="Name">Name</option>
+                                                                <option value="Address">Address</option>
+                                                                <option value="Mobile">Mobile</option>
+                                                                <option value="MembershipId">Membership Id</option>
+                                                                <option value="CustCode">Customer Code</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-9 Textpadding">
+                                                        <input type="text" id="txtCustomer" class="form-control" placeholder="Search" style="height: 41px;
+                                                            border-top-left-radius: 0px; border-bottom-left-radius: 0px; margin-top: 1px;" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="input-group" id="divBarcode" style="display: none">
+                                                <span class="input-group-addon  IconBkColor"><i class="fa fa-search icon-white fa-lg">
+                                                </i></span>
+                                                <input type="text" id="txtBarcode" class="form-control" placeholder="Search" style="height: 42px;" />
+                                            </div>
+                                            <!--<div class="input-group">
+                                            <span class="input-group-addon IconBkColor"><i class="fa fa-search fa-lg icon-white"></i></span>                                        
+                                            <input type="text" id="txtCustomer" class="form-control" placeholder="Search" style="height: 42px;" />
+                                        </div>-->
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="row-fluid">
+                                        <div class="col-sm-6 ">
+                                            <a id="achrAddCustomer" onclick="return checkAccessRights('Add New')" class="btn btn-primary btn-block btn-lg  active btn-style-3">
+                                                <span class="textBold">Add New Customer</span>&nbsp;&nbsp;<i class="fa fa-user fa-lg icon-white"></i></a>
+                                        </div>
+                                        <div class="col-sm-6 ">
+                                            <a id="achrDailyDashboard" href="Masters/Default.aspx" onclick="return checkAccessRights('Daily Dashboard')"
+                                                class="btn btn-primary btn-block btn-lg  active btn-style-3"><span class="textBold">
+                                                    Daily Dashboard</span>&nbsp;&nbsp;<i class="fa fa-tachometer fa-lg"></i></a>
+                                        </div>
+                                    </div>
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+                <br />
+                <div class="row-fluid">
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-8">
+                        <div id="divShowMsg" class="row-fluid col-sm-12 Textpadding" style="display: none;">
+                            <div id="DivContainerStatus">
+                                <div id="DivContainerInnerStatus" class="span label label-default">
+                                    <h4 class="text-center">
+                                        <span style="color: White; font-weight: bold" id="lblMsg"></span>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row-fluid">
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-8 whitebox3">
+                        <div class="row-fluid text-center" style='min-height: 100px; font-size: 16px; padding: 15px'>
+                            Visit helpdesk and watch video tutorials to learn how to effectively use QDC smart
+                            software tools. Find what's new, raise and check support tickets, initiate chat,
+                            gain in depth configuration knowledge, FAQ and many more.<br />
+                            <a href="https://support.quickdrycleaning.com/" target="_blank">Click here to visit
+                                support portal </a>
+                            <br />
+                            <a style="color: #c50000;" href="https://youtube.com/watch?v=mU8atbU5ZEU&feature=share"
+                                target="_blank">How to change order series, watch video</a>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+                <div class="row-fluid" id="divGetStart">
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-10" style="display: none;">
+                        <div class="row-fluid">
+                            <div class="textBold hometxtcolor" style="font-size: 21px">
+                                Get Started</div>
+                        </div>
+                        <div class="row-fluid">
+                            <ol style="margin-left: 15px; font-size: 18px" class="hometxtcolor">
+                                <li><span class="textBold hometxtcolor" style="font-size: 18px">Help me to add a new
+                                    customer and create a new order</span>&nbsp;&nbsp;&nbsp; <a id="achrTour1"><span
+                                        style="font-size: 17px" class="textBold">Start Tour</span>&nbsp;&nbsp;<i class="fa fa-share"></i>
+                                        &nbsp;<i class="fa fa-file-video-o fa-lg"></i></a> </li>
+                                <li><span class="textBold hometxtcolor" style="font-size: 18px">Help me understand how
+                                    to deliver garments post processing.</span>&nbsp;&nbsp;&nbsp; <a id="achrDeliverGarmentTour"
+                                        class="TourCursor"><span style="font-size: 17px" class="textBold">Start Tour</span>&nbsp;&nbsp;<i
+                                            class="fa fa-share"></i> &nbsp;<i class="fa fa-file-video-o fa-lg"></i></a>
+                                </li>
+                                <li><span class="textBold hometxtcolor" style="font-size: 18px">Help me to connect to
+                                    support team for technical assistance</span>&nbsp;&nbsp;&nbsp; <a id="achrTeamSupport">
+                                        <span style="font-size: 17px" class="textBold">Start Tour</span>&nbsp;&nbsp;<i class="fa fa-share"></i>
+                                        &nbsp;<i class="fa fa-file-video-o fa-lg"></i></a> </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <div class="col-sm-2">
+                    </div>
+                    <a href="admin/frmpospurchase.aspx" style="font-size: large; color: #337AB7; display: none;"
+                        target="_blank">Click To Buy POS</a>
+                </div>
+                <div class="row-fluid" id="divEvent" style="margin-top: -20px; display: none;">
+                    <!-- <div class="col-sm-2"></div>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <a id="a3" href="https://in.explara.com/e/national-convention-of-dry-cleaners--launderers-ncdl" target="_blank"><img alt="Drycleaners Conclave"  src="img/Cover1.png" style=" display:block;"  width="100%"/></a>
+                                </div>
+                            </div>-->
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div>
+        <div class="modal" id="pnlLoader" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-sm-2 modal-dialog-center" style="width: 16%">
+                <div class="modal-content">
+                    <div class="text-center" style="padding: 36px;">
+                        <span class="fa  textBold">Please Wait..</span><br />
+                        <div class="div-margin">
+                            <img src="images/ajax-loader.gif" /></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="SoftwareVerPopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-dialog-center">
+                <div class="modal-content">
+                    <div class="panel panel-primary" style="margin: 5px;">
+                        <div class="panel-body well-sm-tiny">
+                            <div class="row-fluid div-margin text-center">
+                                <div id="divSoftwareUpdate" class="text-center" style="display: none;">
+                                    <a id='achrSWUpdate' href="frmUpdateVersion.aspx">New Update available.</a>
+                                </div>
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="panel-footer text-center">
+                            <span id="btnCancel" class="btn btn-primary PointerCur" style="padding: 5px 21px;">Close</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="pnlPrinterPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="panel panel-primary" style="margin: 5px;">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <span id="spnPrinterHeader">Install Printing Services</span>
+                                <button type="button" class="close" id="Button3" data-dismiss="modal">
+                                    <span aria-hidden="true"><i class="fa fa-times-circle"></i></span><span class="sr-only">
+                                        Close</span></button>
+                            </h3>
+                        </div>
+                        <div class="panel-body well-sm-tiny" style="padding: 0px;">
+                            <div class="row-fluid div-margin">
+                                <div class="col-sm-12">
+                                    <div class="text-center" id="divPrinterIcon">
+                                        <i class="fa fa-cogs fa-3x" style="font-size: 100px; color: #5C5C5C"></i>
+                                    </div>
+                                    <div class="div-margin" id="divPrinterMsg">
+                                        Install the Quick Dry Cleaning Printing Services (Windows) application to setup
+                                        your printers for invoice and tag(s) printing.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-fluid div-margin text-center">
+                                <div class="col-sm-12">
+                                    <br />
+                                    <a id="btnPrinter" class="btn btn-primary" href="#"><i class="fa fa-download"></i>&nbsp;Download
+                                        Printer Setup</a>
+                                    <br />
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="pnlPrinterConfigStep2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div id="divStep1" class="panel panel-primary" style="margin: 5px; display: none;">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <span>Printer Wizard</span>
+                                <button type="button" class="close" id="Button1" data-dismiss="modal">
+                                    <span aria-hidden="true"><i class="fa fa-times-circle"></i></span><span class="sr-only">
+                                        Close</span></button>
+                            </h3>
+                        </div>
+                        <div class="panel-body well-sm-tiny">
+                            <div style="height: 150px;">
+                                <div class="row-fluid div-margin">
+                                    <div class="col-sm-4">
+                                        <img src="images/PrinterImg.png" style="width: 150px; height: 150px;" />
+                                    </div>
+                                    <div class="col-sm-8" style="padding-top: 50px;">
+                                        This wizard will help you to set the printers for Invoice and Tag printing.<br />
+                                        Click Next to continue.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer text-center">
+                            <button id="btnPrinterNext" type="button" clientidmode="Static" class="btn btn-info">
+                                <i class="fa fa-arrow-right"></i>&nbsp;Next</button>
+                            <button id="btnPrinterClose" type="button" clientidmode="Static" class="btn btn-info">
+                                Close</button>
+                        </div>
+                    </div>
+                    <div id="divStep2" class="panel panel-primary" style="margin: 5px; display: none;">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <span>Printer Wizard</span>
+                                <button type="button" class="close" id="Button2" data-dismiss="modal">
+                                    <span aria-hidden="true"><i class="fa fa-times-circle"></i></span><span class="sr-only">
+                                        Close</span></button>
+                            </h3>
+                        </div>
+                        <div class="panel-body well-sm-tiny">
+                            <div style="height: 150px;">
+                                <div class="col-sm-8">
+                                    <div class="row-fluid div-margin">
+                                        Please choose your invoice printer
+                                        <div class="input-group">
+                                            <span class="input-group-addon IconBkColor"><i class="fa fa-print fa-lg"></i></span>
+                                            <select id="drpInvocePrinter" class="form-control">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="BorderTopLine2" style>
+                                    </div>
+                                    <div class="row-fluid div-margin">
+                                        Please choose your tag printer
+                                        <div class="input-group">
+                                            <span class="input-group-addon IconBkColor"><i class="fa fa-tags pull-right iPadding">
+                                            </i></span>
+                                            <select id="drpBarcodePrinter" class="form-control">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="col-sm-4" style="padding-top: 10px; padding-left: 45px">
+                                    <img src="images/PrinterImg.png" style="width: 100px; height: 100px;" />
+                                </div>
+                            </div>
+                            <div class="row-fluid div-margin" style="display: none">
+                                <div class="col-sm-4 tempSize">
+                                    Template 1</div>
+                                <div class="col-sm-4 tempSize">
+                                    Template 2</div>
+                                <div class="col-sm-4 tempSize">
+                                    Template 3</div>
+                            </div>
+                            <div class="row-fluid" style="display: none">
+                                <div class="col-sm-4 tempSize">
+                                    Template 4</div>
+                                <div class="col-sm-4 tempSize">
+                                    Template 5</div>
+                                <div class="col-sm-4 tempSize">
+                                    Template 6</div>
+                            </div>
+                        </div>
+                        <div class="panel-footer text-center">
+                            <button id="btnUpdatePrinter" type="button" clientidmode="Static" class="btn btn-info">
+                                <i class="fa fa-floppy-o"></i>&nbsp;Save</button>
+                            <button id="btnBackStep1" type="button" clientidmode="Static" class="btn btn-info">
+                                <i class="fa fa-arrow-left"></i>&nbsp;Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="holder-gotomeeting" id="divChrome" style="display: none">
+            <div class="gotomeeting">
+                <p>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOaSURBVGhD1ZpJiFRXFEBbxajEAceYIIqC4hBBHIhxQASVIIJZuRCXKqIuVAIOC4dViCjJIiKIC0UiimShKAEHiBqCAcEQB4wITnGIA1GMiqLGc376QdH8+l12VXffPnCg/61Xv+6r+u/9+97vumD0xNm4Gnfhz3gRH+B/eBhD0h4/x2/wPL5BEy5nuI58ghvwL8xLuNSTuALH4gcYgkG4G19hSvQafo/78Fl97CluxeEYiu74Lb5EE7UjB3AW+pqXTOqYY+NjDMcU9Fs3yddoov4yYsLn0Ncc0HMxHO1wPZq8if6CIzHRA/9AX7uCQzEcHXAHmqSX05r6WMJBewJ9/TL2xXCY5I9oko9wEjZkM/r6LRxgICLb0CSdWksvpcR09H7hJTfZQEQWoZ24j0MMNKAjXkXbbDIQkc/Q8eA37beex1K0E3bGToWjE15Ak1xpIIcP8R7aZp6BiHyFJvgbOu3msRBt8zuWa9OqeD9wdnqLEw2U4QzakSXZUUDSr7E3O8rnU7SNNVQ3A9GwDL+B/hp5U23CGcqO7MmOAuLsZIKW2kWcRtstyI4Csh1NcHF2lI+zldWuv1p/AxG5jibYLzvK5wu0s64AQ2K1aoJWsEW4/rZd2PExH03Q2qqInWi7tdlRQLagCRaNDzmFtvsyOwrIITRBV4BF3EHbjcqOApJWd42tJ2yjYWesh+iMVVTFdsXUkc4GIuK94fH/f5blI7QTL7KjFqQXjqtAdwdN8C4WMRhtZ1GZd548a1IZexe+hOlyaEzrrCJGY977yvkd1owR+C96Yr/xYwX+gEX4i+S9L3kc03aRZX7Nt0Qt7jy5W5hFVW21rEI/x0svbdrVnLQv5aXmJVdrHGeu8Z355hhoLrpg2s6sdZ3UGx1fnttHCs3OMHyCfqBbPbXAWekIek7Ll9IdyGbFHQ8/9DmOMVAlbp96vr/R5yQtis8v/PA/0ccATWUqOkvpTAMtjdPiWbQz+w00ARdft9FztOouo/eEf9BElhl4DxwHR9H3eu9osXFRDtcUTpdOm+MNVIjPSeyEJb31Vwh8tmdSPoXycXJjzMA0LqYZiILj5Ve0MwexqMhzVnJ2su06A9EYiK5HTNCdxjwcB2mZ+xOG3O8V/0PB8eK6JO+BzddoJ25iHwORKZdsY50MR97lU8llF5LSAb0RK50IQmK5kRZIWunUHBL/ScZOeLOcYKCtksqQ5dlRG6eayrgK6ureAXThGdfhzSZKAAAAAElFTkSuQmCC">
+                    Click <strong>Printer Setup Opener</strong> to begin.</p>
+            </div>
+        </div>
+        <div class="holder-gotomeeting-for-mozilla" id="divmozilla" style="display: none">
+            <div class="gotomeeting-for-mozilla">
+                <p class="step1">
+                    <img class="steps-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFJSURBVGhD7dgtSwRRFIDhEYMaDXYFkwoW/Qf7O4yCYBEEwSBGi9E1mGTZsphsGkxGLTZBk2LQ4gcYVNT3ggM3nLM7zqxz75XzwlOGPXc5MAO7k1mWZVlWDQ1jNJABVGoKe7jDV0DvOMcqRvCr3JA7QDo4pCvMoFArkA6JxT3G0bVJvEE6ICZH6NoOpMEYzULtGtJQjNaglsJtlduFmjRQ1QXO8OFd64c21KSBKm4xCNcjpM+UVdsin1hCXlKL3OAAW5iDX1KLNKGV1CKHaHj8nxPJPiOO/2W2iMIWKcMWKcAWKcMWKcAWKePfLHKM/P3U08+1fql1kb/UgtozpKEYbUPtFNJQjBagtgxpKDYvcM+d2hAuIQ3HZB09m8YDpANi4P5K5y80ejaBE0gHhfKKDRRewm8em9hHJxD3Im4RY7Asy7IsSy/LvgGZdwo14du0hgAAAABJRU5ErkJggg==">
+                    Click <strong>Save File</strong> in the dialog box in the center.</p>
+                <p class="step2">
+                    <img class="steps-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHzSURBVGhD7di7Sx1BFIDxGw3xURhSaKGBKAhCIqQQCwur9P4JdprGIhFBsBC72FikCBZiIPgoRBCraKOCdhoiIRoUBRstkk5Bgg+S70AWluXMzc7K7I4wH/wQ7s4sHHS9c28pFAqFQqEcqsaTgjzAnXqOKZzhT4Gu8QVDqIFVskluoN24SEdoR6reQruJL36iGWVrxRW0G/hkFWX7AG2jj17C2DG0TT4ahrH78GcVmYQxbUNWv7GBWSxjD9q6rOZgTNuQxTwakKwD36DtseV8kM+Ivxs/RXwoebc+gbbXhvNB2iA9xiai1xfxCFIf4nuycDrIPqLeIXn9NST5LSWv2XI6yBKitGdhGtJDJK/ZcjrICuSBFhf/Xot7A+kZktdsOX9GTL5DPg5Ig9DW2ChkkG00QpKfcvDT1tnIdZAbjCP6byUP+S60tbZyG+QQXYjqxim0tVnkMsg66iDV4j1uoa3Nyvkgcr6KHupO/IC27q6cDnKJJkg9cHmadjrIR0gVkDPXjsFXaPttOB2kF2mSc5i234bTQV4hTd4PkqcZGDuHtslHEzC2BW2Tj8o+jwPQNvlGTtbySdNYFQ6gbfbJCP7bC/yCdgMfyEfmSqSqBWvQblQUOTWMIvUQ8eSsNIZPWCiIfBHXj3qEQqFQKBQyVyr9BRib5t9/OkoZAAAAAElFTkSuQmCC">
+                    Click
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACZSURBVEhL7dSxDkAwEMbxvqCO3oWJgcXbSDB5IovBTo476VAi+EqT/pNbLm1/E8qrdNrM5vAaH2FVN64TYGgB5jW+APMaX4B5jQ8OR0mT0cO2MWHb0F1+5l46bYs476eyHnbsaOgMnaU7fP1ZV/DXUekMh6GSDYejkok7QyXBnaISgc5R/7P9eZDD7Aab3yVy/gO7HGa/SKkFZHqafxeCjw0AAAAASUVORK5CYII="
+                        width="22">
+                    above, then click <strong>Printer Setup Opener</strong> to begin.</p>
+                <img class="arrow-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOnSURBVGhD1ZpZqE1RGICvOYQMoYRIppAMD6YHESkkD4YXkSRDJMQDIXmgDA8iwwMJSZRQUqSMD4RkLEXGDJll5vuOu+t222ffc9nnnHW++mL/Z529/+XsvYZ/K0uZodji719Ll3b4Ck9gTQOlSF28gL/LXYYlyXq0A8/xR7neZiXFOPyFX7EvrkQ79QxbY0nQAd+gic8xALXwJBo7XX4cND4Xl9GEDxioQEt8gn622kDIbEYTvYuNDVRiCPqs/MSRBkJkItqJz9jbQBaWou1eYBsDIdEF36MJzjCQQA08jrY9i7UxCBrgdTSxPQZyoDk+RL+z1kAI7EQTuoUNDeTIAHR4dpgebaCYTEE78Qm7G6gmC9Dvv8b2BoqBidsBE7FD/4LPyyH0HJfQ4bugeAt5K5nADgP/QRO8j55rk4FC4kPtha9ifQP/SR/8gj4v4w0UAodXO/EOOxtIiVnoed9iRwP5xInOCc8LTjCQMvvRc1/BegbygUsOlx5eyKVIPmiEd9BrbDGQD1wEegEfzK7ozx+nu8IkHJnivhfpFsD1mNeahKnictwT56IzdhI9Me57cbrs8R8tFdqiW1aX50k6gnnxqjri/GM7Z/W481R2NzrfFAw3SyboLJ2Et14u7YrKR3RUS6Ip2hH3JMHyCE3S0ScbPuy20bjNVxCcRxN0f5KEz4ftirZQrIq9aIJjMkfZuYm2cykfJNE21j+TOIq2m5Y5CpARaIIuzZOIinfrMkcB4pL8O77EpLF/JtqRY5mjQLGgYJL9M0fx9ELb2OFgi9uL0SSTigr+WpaDbGdJNUhc0jjZPcWkUk+0CK1qYCgqvg8xyaTV63S0jXNPsFgONcl7mK2g4KweFS96GAiVc2iSCzNH8exC2xS86FAdBqLFBF8xtDIQw2C0I+7TrT4Gy1Y0Ud+JZHvwT6FtNmSOAsXn4AYm3T7ON/5yloM6GQgVk3MTZWfmG4hhH/r5RQymOh/HcPyGJrvKQCWa4WP08+DfZllxj4Zby6yVK5TD0InU22yqgZBxlIpelFo77ocViaqNloNSLwWljbtHqyMm7O3maFXxv3isQT/zl1mCBa2gVJc6aMJRIc468gr0za8sQjviZ76mC/7dvDWuI2jC0S90EEehtWX/14Rxb0dXCGlU/vPKIDyMbsqiTn3AMxgNEOowvhG7YdD4uno5XsMo+Wzexu04FoPGgvZsdLJ8gHGd0aC3y3FYD7B8NBnnoRPnNpyLMZSV/QGVQxnB59QBEwAAAABJRU5ErkJggg==">
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-center">
+            <div class="modal-content">
+                <div class="panel panel-primary popup2">
+                    <!-- <div class="panel-heading">
+                        <h3 class="panel-title">
+                            </h3>
+                    </div>-->
+                    <div class="panel-body">
+                        <div class="row-fluid">
+                            <div class="col-sm-7  nopadding">
+                                <div class="input-group">
+                                    <a id="a2" href="https://in.explara.com/e/national-convention-of-dry-cleaners--launderers-ncdl"
+                                        target="_blank">
+                                        <img alt="Drycleaners Conclave" src="img/Conclave_Image.jpeg" style="width: 560px;
+                                            height: 280px;" /></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <a id="a1" href="https://in.explara.com/e/national-convention-of-dry-cleaners--launderers-ncdl"
+                            class="padding6" style="margin: 230px" target="_blank">
+                            <img src="img/BuyTicket.png" style="width: 120px; height: 70px;" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="pnlOrderOverDuePopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-center">
+            <div class="modal-content">
+                <div class="" style="margin: 5px; font-size: 17px;">
+                    <div class="panel-body well-sm-tiny" style="padding: 0px;">
+                        <div class="row-fluid div-margin">
+                            <div class="col-sm-12">
+                                <div class="div-margin textCenter" id="div2" style="padding: 30px;">
+                                    <div class="div-margin" style="color: Red;">
+                                        Urgent Attention Required</div>
+                                    High ageing (>90 Days) undelivered orders found.
+                                    <br />
+                                    Please deliver the orders now to continue using CRM.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row-fluid div-margin text-center">
+                            <div class="col-sm-4">
+                            </div>
+                            <div class="col-sm-4">
+                                <a id="btnOrderDeliverNow" class="btn btn-primary btn-block btn-lg  active btn-style-3"
+                                    href="#">Deliver Now</a>
+                                <br />
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="AddToOrder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-center">
+            <div class="modal-content">
+                <div class="panel panel-default popup2">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Create order by
+                            <!-- Close button -->
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="float: right;
+                                font-size: 2.0rem; border: none; background: transparent; color: inherit;">
+                                &times;
+                            </button>
+                        </h3>
+                    </div>
+                    <div class="panel-body well-sm pull-top text-center">
+                        <div class="row-fluid div-margin">
+                            <span id="lblCustomerInfo"></span>
+                        </div>
+                        <div class="row-fluid div-margin" style="margin-top: 22px;">
+                            <div class="text-center">
+                                <a id="btnOrderPerPieces" clientidmode="Static" class="btn btn-primary btn-style-3 textDecoration mx-2"
+                                    href="#">Create Order<br />
+                                    Per Pieces </a>&nbsp;&nbsp;&nbsp; <a id="btnOrderPerWeight" class="btn btn-primary btn-style-3 textDecoration mx-2"
+                                        href="#">Create Order<br />
+                                        Per Weight </a>&nbsp;&nbsp;&nbsp; <a id="btnDashboard" clientidmode="Static" class="btn btn-primary btn-style-3 textDecoration mx-2"
+                                            href="#">Customer<br />
+                                            Dashboard </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="hdnIsTour" value="0" />
+    <input type="hidden" id="hdnIsSupportTour" value="0" />
+    <input type="hidden" id="hdnIsDeliverTour" value="0" />
+    <input type="hidden" id="hdnIsBookingNo" value="0" />
+    <input type="hidden" id="hdnBranchID" value="0" />
+    <input type="hidden" id="hdnCustSearchType" value="0" />
+    <input type="hidden" id="hdnControlWidth" />
+    <input type="hidden" id="hdndrpFilterWidth" value="0" />
+    <input type="hidden" id="hdnClearContentQString" value="" />
+    <input type="hidden" id="hdnIsDirectToBooking" value="false" />
+    <input type="hidden" id="hdnIsOverDueOrder" value="False" />
+    <input type="hidden" id="hdncustBookingCode" value="" />
+    <input type="hidden" id="hdnIsDirectOrderCreationOpen" value="False" />
+     <input type="hidden" id="hdnIsRoyaltyDue" value="False" />
+      <input type="hidden" id="hdnIsCloudPrintActive" value="False" />
+    <!-- Second Row of Containers Ends -->
+    <!-- Left
+	Side TABS Starts here-->
+    <!--
+	Main Container ENDS -->
+    <!-- Le javascript ==================================================
+	-->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- Right
+	now it is referring to JQuery from Net I have to do it Conditionally so local can
+	also work-->
+    <!-- <script src="js/jquery-latest.js" type="text/javascript"></script>-->
+    <script src="js/bootstrap.js" type="text/javascript"></script>
+    <script src="js/bootstrap-datepicker.js" type="text/javascript"></script>
+    <script src="JavaScript/typeahead.bundle.min.js" type="text/javascript"></script>
+    <!--<script src="js/typeahead-bs2.js" type="text/javascript"></script>-->
+    <script src="JavaScript/HomeSrc.js" type="text/javascript"></script>
+    <script src="JavaScript/intro.js" type="text/javascript"></script>
+    <script src="JavaScript/AppTour.js" type="text/javascript"></script>
+    <script src="JavaScript/Notification.js" type="text/javascript"></script>
+    <script src="JavaScript/bowser.js" type="text/javascript"></script>
+    <!--<script>
+    var analytics = window.analytics = window.analytics || [];
+    if (!analytics.initialize) if (analytics.invoked) window.console && console.error && console.error("CustomerSuccess snippet included twice."); else {
+        analytics.invoked = !0;
+        analytics.methods = [
+            "trackSubmit", "trackClick", "trackLink",
+            "trackForm", "pageview", "identify", "reset",
+            "group", "track", "ready", "alias", "debug",
+            "page", "once", "off", "on"
+        ];
+
+        analytics.factory = function (t) {
+            return function () {
+                var e = Array.prototype.slice.call(arguments);
+                e.unshift(t);
+                analytics.push(e);
+                return analytics
+            }
+        };
+
+        for (var t = 0; t < analytics.methods.length; t++) {
+            var e = analytics.methods[t];
+            analytics[e] = analytics.factory(e)
+        }
+
+        window._csb = {
+            apiKey: "LSl797rNW9O2Co+0JzEbsObxBZm/cw68K7qbchTY9RA=",
+            apiHost: "https://qdc.customersuccessbox.com/api_js/v1_1"
+        };
+
+        analytics.load = function (callback) {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.async = !0;
+            script.src = "https://d1h5mit33yhtph.cloudfront.net/analytics.js";
+
+            script.addEventListener('load', function (e) {
+                if (typeof callback === 'function') {
+                    callback(e);
+                }
+            }, false);
+
+            var n = document.getElementsByTagName("script")[0];
+            n.parentNode.insertBefore(script, n)
+        };
+
+        analytics.load(function () {
+
+        });
+    }
+</script>-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var strData = GetSessionUserID();
+            if (strData == "False") {
+                window.open('login.aspx', '_self');
+            }
+            var d = new Date($.now());
+            var time = d.getDay() + "-" + d.getMonth() + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+            time = '&ClearContent=' + time;
+            $('#hdnClearContentQString').val(time);
+            // HomeScreenTour();
+            //$('#hdnIsTour').val('1');
+
+
+            // GetStoreTimeZone();
+            CheckGrowthMateActive();
+            GetOrderWiseLicenseData();
+            GetLicenseType();
+            GetIsDirectToBooking();
+            GetIsPickupBuzzerEnabledData();
+           // CheckPendingRoyaltyInvoices();
+
+            var achrCustomer = document.getElementById('achrAddCustomer');
+            achrCustomer.href = "New_admin/frmNewCustomer.aspx?Add=true&IsTour=" + $('#hdnIsTour').val() + $('#hdnClearContentQString').val() + "";
+
+            $('#achrTour1').click(function () {
+                HomeScreenTour(); $('#hdnIsTour').val('1');
+                achrCustomer.href = "New_admin/frmNewCustomer.aspx?Add=true&IsTour=" + $('#hdnIsTour').val() + $('#hdnClearContentQString').val() + "";
+            });
+
+            var btn_OrderDeliverNow = document.getElementById('btnOrderDeliverNow');
+            btn_OrderDeliverNow.href = "Bookings_New/OverDueOrders.aspx?flag=1&" + $('#hdnClearContentQString').val() + "";
+
+            $('.introjs-nextbutton').click(function ()
+            { $('#achrAddCustomer').focus(); });
+
+            GetNotificationData();
+            var achrPayNow = document.getElementById('achrPayNow');
+            achrPayNow.href = "frmLicence.aspx?Flag=1";
+            $('#btnBarClose').click(function () {
+                UpdateNotification();
+            });
+
+            if (RegExp('IsTour=1', 'gi').test(window.location.search)) {
+                HomeScreenTour(); $('#hdnIsTour').val('1');
+            }
+
+            if (RegExp('IsSupportTour=1', 'gi').test(window.location.search)) {
+                HomeScreenTour2(); $('#hdnIsSupportTour').val('1');
+            }
+
+            if (RegExp('IsDeliveryTour=1', 'gi').test(window.location.search)) {
+                HomeScreenDelvery(); $('#hdnIsDeliverTour').val('1');
+            }
+
+
+            //            var achrSuppoprt = document.getElementById('achrSupport');
+            //            achrSuppoprt.href = "New_Admin/frmSupport.aspx?IsSupportTour=" + $('#hdnIsSupportTour').val() + $('#hdnClearContentQString').val() + "";
+            $('#achrTeamSupport').click(function () {
+                HomeScreenTour2(); $('#hdnIsSupportTour').val('1');
+                achrSuppoprt.href = "New_Admin/frmSupport.aspx?IsSupportTour=" + $('#hdnIsSupportTour').val() + $('#hdnClearContentQString').val() + "";
+            });
+
+            $('#achrDeliverGarmentTour').click(function () {
+                HomeScreenDelvery(); $('#hdnIsDeliverTour').val('1');
+                $('#txtCustomer').focus();
+            });
+
+            $('.introjs-tooltip').click(function () {
+                $('#hdnIsDeliverTour').val('0')
+            });
+
+            //              $('body').delegate('.introjs-tooltipbuttons', 'click', function (event) {
+            //                //  alert('hi..');
+            //              });
+
+            CheckCloud();
+
+            $('#achrClose').click(function () {
+                SaveSMSReminder();
+                $('#divShowSMSBar').hide();
+                return false;
+            });
+
+            $('#btnPickUpClose').click(function () {
+                UpdateHomePickUpBarHomeScreen();
+            });
+
+            $('#achrMoreInfo').attr('href', 'New_Admin/frmSMSInfo.aspx');
+
+
+            var BookingNo = getParameterByName('BN');
+            if (BookingNo != "") {
+                var CustomerName = getParameterByName('CustName');
+                stateOfColor = true;
+                setDivMouseOver('Green', '#999999', stateOfColor)
+                $('#lblMsg').text('Order# ' + BookingNo + ' for ' + CustomerName + ' generated successfully.');
+
+            }
+            $("#btnLogOut").click(function () {
+                //                  analytics.logout();
+                var _meLoc = window.location + '';
+                var _index = _meLoc.toLowerCase().indexOf('app');
+                var _baseUrl = _meLoc.slice(0, _index - 1);
+                _index = _baseUrl.lastIndexOf('/');
+                _baseUrl = _meLoc.slice(0, _index);
+                setTimeout(function () {
+                    window.open(_baseUrl + '/Login.aspx', '_self');
+                }, 500);
+
+            });
+            // setLogoutURL();
+            //GetCDNPath();
+            //              var strURL = window.location + '';
+            //              if (strURL.indexOf('?SoftwareUpdate=False') == -1) {
+            //                  CheckSoftwareUpdate();
+            //              }
+
+            //close confirm pop up
+            $('#btnCancel').click(function (event) {
+                $('#SoftwareVerPopUp').modal('hide');
+                return false;
+            });
+            $('#btnPrinter').click(function (event) {
+                // $('#btnPrinter').attr('href', "Docs/QuickDryCleaningPrintingService.exe");
+                // $('#btnPrinter').attr('href', "PrinterSetupDownload.ashx?file=Docs/QuickDryCleaningPrintingService.exe");
+                $('#btnPrinter').attr('href', "http://quickdrycleaningclients.com/PrinterServiceSetup/PrinterSetup/QuickDryCleaningPrintingService.exe");
+                $('#pnlPrinterPopup').modal('hide');
+                var AllBrowseDetails = JSON.stringify(bowser, null, '    ');
+                var BrowseName = JSON.parse(AllBrowseDetails).name.trim();
+                if (BrowseName == 'Firefox') {
+                    $('#divmozilla').show();
+                    $('#divChrome').hide();
+                }
+                else {
+                    $('#divmozilla').hide();
+                    $('#divChrome').show();
+                }
+                setTimeout(function () { $('#divChrome,#divmozilla').hide(); }, 10000);
+            });
+
+            $('#btnPrinterNext').click(function (event) {
+                $('#divStep1').hide();
+                $('#divStep2').show();
+                return false;
+            });
+            $('#btnPrinterClose').click(function (event) {
+                $('#pnlPrinterConfigStep2').modal('hide');
+                return false;
+            });
+            $('#btnBackStep1').click(function (event) {
+                $('#divStep2').hide();
+                $('#divStep1').show();
+                return false;
+            });
+            $('#drpDefaultCustomerSearch').change(function (event) {
+                $('#txtCustomer').select();
+                return false;
+            });
+//            var IsFromLogin = getParameterByName('EventClick');
+//            if (IsFromLogin == "True") {
+//                // CheckIsPrinterInstalled();                 
+//                var IsOnMobile = false;
+//                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+//                    IsOnMobile = true;
+//                }
+//                var isMacLike = navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i) ? true : false;
+//                if ((IsOnMobile == false) && (isMacLike == false)) {
+//                    var isTablate = isOnAndroidTablet();
+//                    if (isTablate == false) {
+//                        CheckIsPrinterInstalledNew();
+//                    }
+//                }
+
+//                CheckPrinterConfigStep2();
+//                //GetStoreAndUserData();
+//                // GetTotalBalanceAmount();
+//                // GetDashboardData();
+//            }
+            if (RegExp('IsTrial=1', 'gi').test(window.location.search)) {
+                if (localStorage['bowserVersion'] == undefined) {
+                    var Allbrowsername = JSON.stringify(bowser, null, '    ');
+                    localStorage['bowserVersion'] = parseFloat(JSON.parse(Allbrowsername).version.trim());
+                }
+                HomeScreenTour(); $('#hdnIsTour').val('1');
+                achrCustomer.href = "New_admin/frmNewCustomer.aspx?Add=true&IsTour=" + $('#hdnIsTour').val() + $('#hdnClearContentQString').val() + "";
+            }
+        });
+        function setLogoutURL() {
+            var _meLoc = window.location + '';
+            var _index = _meLoc.toLowerCase().indexOf('app');
+            var _baseUrl = _meLoc.slice(0, _index - 1);
+            _index = _baseUrl.lastIndexOf('/');
+            _baseUrl = _meLoc.slice(0, _index);
+            $('#btnLogOut').attr('href', _baseUrl + '/Login.aspx');
+        }
+        function GetSessionUserID() {
+            var strUserID = "";
+            $.ajax({
+                url: 'AutoComplete.asmx/GetSessionUserID',
+                type: 'POST',
+                data: "{}",
+                timeout: 20000,
+                contentType: 'application/json; charset=UTF-8',
+                datatype: 'JSON',
+                cache: true,
+                async: false,
+                success: function (response) {
+                    strUserID = response.d;
+                },
+                error: OnError
+            });
+            return strUserID;
+        }
+        function OnError(xhr, errorType, exception) {
+            var responseText;
+            try {
+                responseText = jQuery.parseJSON(xhr.responseText);
+                var ErrorMsg = errorType + "  :  " + exception + " : " + responseText.ExceptionType + " : " + responseText.StackTrace + " : " + responseText.StackTrace + " : " + responseText.Message
+                alert(ErrorMsg);
+            } catch (e) {
+                responseText = xhr.responseText;
+                alert(responseText);
+            }
+
+        }
+
+        function getParameterByName(name) {
+            var ResultData = '';
+            var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+            if (match && decodeURIComponent(match[1].replace(/\+/g, ' '))) {
+                ResultData = match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+            }
+            else {
+                ResultData = '';
+            }
+            return ResultData;
+        }
+        function showControl() {
+            if ($('#rdbCustomer').is(':checked')) {
+                $('#divCustomer').show();
+                $('#divBarcode').hide();
+                $('#txtCustomer').focus();
+            }
+            else {
+                $('#divBarcode').show();
+                $('#divCustomer').hide();
+                $('#txtBarcode').focus();
+            }
+        }
+
+        function CheckSoftwareUpdate() {
+            $.ajax({
+                url: 'frmUpdateVersion.aspx/CheckSoftwareUpdate',
+                type: 'GET',
+                contentType: 'application/json; charset=UTF-8',
+                datatype: 'JSON',
+                cache: true,
+                success: function (response) {
+                    if (response.d.trim() == 'True') {
+                        $('#divSoftwareUpdate').show();
+                        $('#SoftwareVerPopUp').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        $('#divSoftwareUpdate').hide();
+                        $('#SoftwareVerPopUp').modal('hide');
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+        function GetCDNPath() {
+            var CDNPath = "";
+            $.ajax({
+                url: 'AutoComplete.asmx/GetCDNPath',
+                type: 'GET',
+                contentType: 'application/json; charset=UTF-8',
+                datatype: 'JSON',
+                success: function (response) {
+                    CDNPath = response.d;
+                    $('#imgLogo').attr('src', CDNPath + 'img/QuickiLogo.png');
+                    $('#imgUser').attr('src', CDNPath + 'img/User2.png');
+                },
+                error: function (result) {
+                }
+            });
+        }
+        //          function GetTotalBalanceAmount() {
+        //              $.ajax({
+        //                  url: 'Autocomplete.asmx/GetSMSPopUpData',
+        //                  type: 'GET',
+        //                  data: "",
+        //                  timeout: 20000,
+        //                  contentType: 'application/json; charset=UTF-8',
+        //                  datatype: 'JSON',
+        //                  cache: true,
+        //                  async: false,
+        //                  success: function (response) {
+        //                      var _val = response.d;
+        //                      if (_val != "") {
+        //                          var aryData = _val.split(':');
+        //                          var TotalAmountDue = aryData[1];
+        //                         // analytics.feature("Amount Receivable", "Login", "QDC", { "TotalAmountDue": TotalAmountDue })
+        //                      }
+        //                  },
+        //                  error: function (response) {
+        //                  }
+        //              });
+        //          }
+        //          function GetStoreAndUserData() {
+        //              $.ajax({
+        //                  url: 'Autocomplete.asmx/StoreAndUserData',
+        //                  type: 'GET',
+        //                  contentType: 'application/json; charset=UTF-8',
+        //                  datatype: 'JSON',
+        //                  async: false,
+        //                  success: function (response) {
+        //                      var _val = response.d;
+        //                      if (_val.trim() != "") {
+        //                          var JSONData = $.parseJSON(_val);
+        //                          analytics.login(JSONData.UserID, JSONData.StoreCode);
+        //                          analytics.identify(JSONData.UserID, {
+        //                              first_name: JSONData.UserName,
+        //                              email: JSONData.UserEmail,
+        //                              phone: JSONData.UserPhone,
+        //                              mobile_phone: JSONData.MobileNo
+        //                          });
+        //                      }
+        //                  },
+        //                  error: function (response) {
+        //                  }
+        //              });
+        //          }
+        //          function GetDashboardData() {           
+        //              $.ajax({
+        //                  url: 'WebServices.asmx/GetDashboardData',
+        //                  type: 'GET',
+        //                  contentType: 'application/json; charset=UTF-8',
+        //                  datatype: 'JSON',
+        //                  success: function (response) {
+        //                      var Result = response.d;
+        //                      if (Result.trim() != "") {
+        //                          var JSONData = $.parseJSON(Result);                          
+        //                          if (JSONData.Status == "True") {
+        //                              analytics.account(JSONData.StoreCode, {
+        //                                  custom_Software_Version: JSONData.SoftwareVersion,
+        //                                  custom_ROI: JSONData.ROI,
+        //                                  custom_Active_Customers: JSONData.ActiveCustomer,
+        //                                  custom_Revenue_Monthly: JSONData.RevenueMonthly,
+        //                                  custom_Revenue_Quarterly: JSONData.RevenueQuarterly,
+        //                                  custom_Revenue_Half_Yearly: JSONData.RevenueHalfYearly,
+        //                                  custom_Revenue_Yearly: JSONData.RevenueYearly,
+        //                                  custom_Orders_Monthly: JSONData.OrdersMonthly,
+        //                                  custom_Orders_Quarterly: JSONData.OrdersQuarterly,
+        //                                  custom_Orders_Half_Yearly: JSONData.OrdersHalfYearly,
+        //                                  custom_Orders_Yearly: JSONData.OrdersYearly,
+        //                                  custom_Garments_Monthly: JSONData.GarmentsMonthly,
+        //                                  custom_Garments_Quarterly: JSONData.GarmentsQuarterly,
+        //                                  custom_Garments_Half_Yearly: JSONData.GarmentsHalfYearly,
+        //                                  custom_Garments_Yearly: JSONData.GarmentsYearly,                                  
+        //                                  custom_CPO: JSONData.CostPerOrder
+        //                            });
+        //                          }
+
+        //                      }                     
+        //                  },
+        //                  error: function (response) {                     
+        //                  }
+        //              });
+        //          }
+        function CheckIsPrinterInstalled() {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                cache: false,
+                url: PrinterServiceBaseURL + "getallPrinter",
+                success: function (response) {
+                    //$('#pnlPrinterPopup').modal('hide');
+                    $('#drpInvocePrinter option,#drpBarcodePrinter option').remove();
+                    var rowData = '';
+                    if (response != "") {
+                        var data = response.PrinterName;
+                        var AllPrinterList = data;
+                        $.each(AllPrinterList, function (index) {
+                            rowData += '<option value="' + AllPrinterList[index] + '">' + AllPrinterList[index] + '</option>';
+                        });
+                        $('#drpInvocePrinter,#drpBarcodePrinter').append(rowData);
+                        $('#divStep1').show();
+                        $('#divStep2').hide();
+                        $('#pnlPrinterConfigStep2').modal({ backdrop: 'static', keyboard: false });
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // $('#pnlPrinterPopup').modal({ backdrop: 'static', keyboard: false });
+                }
+            });
+        }
+        function CheckPrinterConfigStep2() {
+            $.ajax({
+                url: 'WebServices.asmx/CheckPrinterConfigStep2',
+                type: 'GET',
+                contentType: 'application/json; charset=UTF-8',
+                datatype: 'JSON',
+                success: function (response) {
+                    var Result = response.d;
+                    if (Result == 'False') {
+                        CheckIsPrinterInstalled();
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                }
+            });
+        }
+        $('#btnUpdatePrinter').click(function (eventParam) {
+            SetDefaultPrinter();
+        });
+        $('#drpDefaultCustomerSearch').change(function (eventParam) {
+            UpdateDefaultCustomerSearch();
+        });
+        function SetDefaultPrinter() {
+            var stateOfColor = true;
+            $.ajax({
+                url: 'WebServices.asmx/SetDefaultPrinter',
+                type: 'POST',
+                data: "{InvoicePrinter: '" + $('#drpInvocePrinter').val() + "', BarcodePrinter: '" + $('#drpBarcodePrinter').val() + "'}",
+                contentType: 'application/json; charset=UTF-8',
+                datatype: 'JSON',
+                success: function (response) {
+                    var _val = response.d;
+                    if (_val == "Record Saved") {
+                        $('#pnlPrinterConfigStep2').modal('hide');
+                        setDivMouseOver('Green', '#999999', stateOfColor)
+                        $('#lblMsg').text('Printers saved successfully.');
+                    }
+                },
+                error: function (result) {
+                    alert("Error");
+                }
+            });
+        }
+
+        function CheckIsPrinterInstalledNew() {
+            var PrinterServiceBaseURL = "http://127.0.0.1:9012/api/printservice/";
+            var PrinterServiceCurrVer = '184.0.1';
+           
+            // Skip printer check and popup when cloud print is active
+            if ($('#hdnIsCloudPrintActive').length && $('#hdnIsCloudPrintActive').val().trim() == 'True') {
+                return true;
+            }
+
+
+            $.ajax({
+                type: 'POST',
+                data: { Version: PrinterServiceCurrVer, StoreCode: window.location.pathname.split("/")[1].toUpperCase().trim() },
+                dataType: 'json',
+                cache: false,
+                url: PrinterServiceBaseURL + "IsPrintUtilityInstalled",
+                success: function (data) {
+                    if (data != "") {
+                        var ClientPrinterVersion = data.Version;
+                        $('#pnlPrinterPopup').modal('hide');
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('#pnlPrinterPopup').modal({ backdrop: 'static', keyboard: false });
+                }
+            });
+        }
+
+        function GetStoreTimeZone() {
+
+            $.ajax({
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                url: 'WebServices.asmx/GetStoreTimeZone',
+                dataType: "JSON",
+                success: function (response) {
+                    var res = (response.d).trim();
+                    if (res == 'India Standard Time') {
+                        CheckSMSCredit();
+                    }
+                },
+                error: function (result) {
+
+                }
+            });
+        }
+
+        function GetLicenseType() {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                url: 'WebServices.asmx/GetLicenseType',
+                dataType: "JSON",
+                success: function (response) {
+                    var res = (response.d).trim();
+                    if (res == '1') {
+                        $('#liDashboard').hide();
+                    }
+                    else {
+                        $('#liDashboard').show();
+                    }
+                },
+                error: function (result) {
+
+                }
+            });
+        }
+
+        function GetIsDirectToBooking() {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                url: 'WebServices.asmx/GetIsDirectToBooking',
+                dataType: "JSON",
+                success: function (response) {
+                    var Result = JSON.parse(response.d.trim());
+                    $('#hdnIsDirectToBooking').val(Result[0].IsDirectToBooking);
+                    if (Result[0].HomeScreenDefaultSearch != undefined) {
+                        $('#drpDefaultCustomerSearch').val(Result[0].HomeScreenDefaultSearch);
+                    }
+
+                    if (Result[0].IsSearchAllOptionActive != undefined) {
+                        var IsSearchAllOptionActive = Result[0].IsSearchAllOptionActive;
+                        if (IsSearchAllOptionActive == 'False') {
+                            $("#drpDefaultCustomerSearch option[value='All']").remove();
+                        }
+                    }
+
+                    if (Result[0].IsOverDueOrder != undefined) {
+                        var IsOverDueOrder = Result[0].IsOverDueOrder;
+                        if (IsOverDueOrder == 'True') {
+                            $('#hdnIsOverDueOrder').val(IsOverDueOrder);
+                            $('#pnlOrderOverDuePopup').modal({ backdrop: 'static', keyboard: false });
+                        }
+                    }
+
+                    if (Result[0].IsOrderDeliveryRuleActive != undefined && Result[0].IsOrderDeliveryRuleActiveStoreWise != undefined) {
+                        if (Result[0].IsOrderDeliveryRuleActive == 'True' && Result[0].IsOrderDeliveryRuleActiveStoreWise == 'True') {
+                            if (Result[0].CurrentOrderDueInDays != undefined) {
+                                var CurrentOrderDueInDays = Result[0].CurrentOrderDueInDays;
+                                var OrderDueInDay = Result[0].OrderDueInDay;
+                                var OrderDueNotifyInDay = Result[0].OrderDueNotifyInDay
+                                if ((parseInt(CurrentOrderDueInDays) >= OrderDueNotifyInDay) && (parseInt(CurrentOrderDueInDays) < parseInt(OrderDueInDay))) {
+                                    var RemDays = (parseInt(OrderDueInDay) - 1) - parseInt(CurrentOrderDueInDays);
+                                    var strPath = "Bookings_New/OverDueOrders.aspx?flag=2&" + $('#hdnClearContentQString').val() + "";
+                                    $('#spnOrderAgeOverDue').html('You have one or more high ageing orders that are pending for delivery. Deliver these now to avoid system blockage. <a  target="_blank" href="' + strPath + '" id="achrPickUp">Deliver Now</a> ');
+                                    $('#divOrderAgeOverDue').show();
+                                }
+                            }
+                        }
+                    }
+
+                    var IsNewOrderReportActive = 'False';
+                    if (Result[0].IsNewOrderReportActive != undefined) {
+                        IsNewOrderReportActive = Result[0].IsNewOrderReportActive;
+                        var d2 = new Date($.now());
+                        var time2 = d2.getDay() + "-" + d2.getMonth() + "-" + d2.getFullYear() + " " + d2.getHours() + ":" + d2.getMinutes() + ":" + d2.getSeconds();
+                        time2 = '?ClearContent=' + time2;
+                        if (IsNewOrderReportActive == 'True') {
+                           
+                            $('#achrOrderReport').attr('href', ('Reports/OrderReport.aspx' + time2));
+                        }
+                        else {
+                            $('#achrOrderReport').attr('href', ('Reports/QuantityandPriceReport.aspx' + time2));
+                        }
+                    }
+
+                    $('#hdnIsDirectOrderCreationOpen').val(Result[0].IsDirectOrderCreationOpen);
+                    $('#hdnIsCloudPrintActive').val(Result[0].IsNewPrintEnable);
+
+
+                    var IsFromLogin = getParameterByName('EventClick');
+                    if (IsFromLogin == "True") {
+                        // CheckIsPrinterInstalled();                 
+                        var IsOnMobile = false;
+                        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+                            IsOnMobile = true;
+                        }
+                        var isMacLike = navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i) ? true : false;
+                        if ((IsOnMobile == false) && (isMacLike == false)) {
+                            var isTablate = isOnAndroidTablet();
+                            if (isTablate == false) {
+                                CheckIsPrinterInstalledNew();
+                            }
+                        }
+
+                        CheckPrinterConfigStep2();                       
+                    }
+
+                },
+                error: function (result) {
+
+                }
+            });
+        }
+
+
+        function CheckSMSCredit() {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                url: 'WebServices.asmx/CheckSMSCredit',
+                dataType: "JSON",
+                data: "IsFromSuperAdmin='False'",
+                success: function (response) {
+                    var res = (response.d).trim();
+                    if (res != '') {
+                        res = $.parseJSON(res);
+                        var CreditBal = res.data.credits;
+                        //var id = res.LoyaltyConfigID;   
+                        var HtmlData = '';
+                        if (parseInt(CreditBal) <= 2000 && parseInt(CreditBal) > 1000) {
+                            $('#divShowSMSPurchaseBar').show();
+                            HtmlData = 'Your SMS credit is about to expire,';
+                        }
+                        else if (parseInt(CreditBal) <= 1000 && parseInt(CreditBal) >= 1) {
+                            $('#divShowSMSPurchaseBar').show();
+                            HtmlData = 'Your SMS credit is low,';
+                        }
+                        else if (parseInt(CreditBal) <= 0) {
+                            $('#divShowSMSPurchaseBar').show();
+                            HtmlData = 'Your SMS credit is Zero,';
+                        }
+
+                        $('#spnShowSMSPurchase').html(HtmlData + ' to purchase. <a class="btn btn-primary" href="admin/frmPurchaseSMS.aspx?' + $('#hdnClearContentQString').val() + '"  style="text-decoration:none" >Click here</a>');
+                    }
+                },
+                error: function (result) {
+
+                }
+            });
+        }
+
+        function UpdateDefaultCustomerSearch() {
+            var stateOfColor = true;
+            $.ajax({
+                url: 'WebServices.asmx/UpdateDefaultCustomerSearchData',
+                type: 'POST',
+                data: "{SearchType: '" + $('#drpDefaultCustomerSearch').val().trim() + "'}",
+                contentType: 'application/json; charset=UTF-8',
+                datatype: 'JSON',
+                success: function (response) {
+                    var _val = response.d;
+                },
+                error: function (result) {
+
+                }
+            });
+        }
+
+        function CheckGrowthMateActive() {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                url: 'APIService.asmx/GetCheckGrowthMateActive',
+                dataType: "JSON",
+                success: function (response) {
+                    var Result = JSON.parse(response.d.trim());
+                    if (Result.Status == "False") {
+                        bntWhatsApp.href = "Admin/GrowthMateSale.aspx";
+                        A7.href = "Admin/GrowthMateSale.aspx";
+                    }
+                },
+                error: function (result) {
+
+                }
+            });
+        }
+
+        function CheckPendingRoyaltyInvoices() {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                url: 'WebServices.asmx/GetPendingRoyaltyInvoices',
+                async: false,
+                dataType: "JSON",
+                success: function (response) {
+                    var Result = JSON.parse(response.d);
+                    if (Result && Result.length > 0) {
+                        // Only proceed if IsRoyaltyEnable is "True"
+                        var isRoyaltyEnabled = false;
+                        var DueDate = '';
+                        var royaltyAmount = 0;
+
+                        // Check if IsRoyaltyEnable is "True" in at least one invoice
+                        for (var i = 0; i < Result.length; i++) {
+                            if (Result[i].IsRoyaltyEnable && Result[i].IsRoyaltyEnable.toString().toLowerCase() === "true") {
+                                isRoyaltyEnabled = true;
+                                DueDate = Result[i].dueDate;
+
+                                // Add royalty amount if available
+                                if (Result[i].royalty_amount) {
+                                    royaltyAmount += parseFloat(Result[i].royalty_amount || 0);
+                                }
+
+                                $('#hdnIsRoyaltyDue').val('True');
+                            }
+                        }
+
+                        // Only show popup if royalty is enabled
+                        if (isRoyaltyEnabled) {
+                            var totalPending = Result.length;
+                            var totalAmount = 0;
+
+                            // Extract and format the earliest due date from invoices
+                            var earliestDueDate = null;
+                            var isDatePassed = false;
+                            var today = new Date();
+                            today.setHours(0, 0, 0, 0); // Set to beginning of the day for comparison
+
+                            // Loop through all invoices to find the earliest due date from dueDate column
+                            for (var i = 0; i < Result.length; i++) {
+                                // Calculate total amount if available
+                                if (Result[i].Net_amount) {
+                                    totalAmount += parseFloat(Result[i].Net_amount || 0);
+                                }
+
+                                // Extract royalty amount if available
+                                if (Result[i].royalty_amount) {
+                                    royaltyAmount += parseFloat(Result[i].royalty_amount || 0);
+                                }
+
+                                // Extract due date from dueDate column
+                                if (Result[i].dueDate) {
+                                    var dueDate = new Date(Result[i].dueDate);
+                                    // Check if the date is valid
+                                    if (!isNaN(dueDate.getTime())) {
+                                        // If there's no earliest date yet or this one is earlier, update it
+                                        if (!earliestDueDate || dueDate < earliestDueDate) {
+                                            earliestDueDate = dueDate;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Format due date as DD-MM-YYYY
+                            var formattedDueDate = 'ASAP';
+                            if (earliestDueDate) {
+                                isDatePassed = earliestDueDate < today;
+                                var day = earliestDueDate.getDate();
+                                var month = earliestDueDate.getMonth() + 1;
+                                var year = earliestDueDate.getFullYear();
+                                formattedDueDate = (day < 10 ? '0' + day : day) + '-' +
+                                                  (month < 10 ? '0' + month : month) + '-' +
+                                                  year;
+                            }
+
+                            // Format royalty amount
+                            var formattedRoyaltyAmount = '₹' + royaltyAmount.toFixed(2);
+
+                            var Content = 'A royalty payment is pending. We kindly request that you complete your payment by <strong>' + DueDate + '</strong>.<br>Please contact your administrator if you have any questions.</b>';
+                            if (isDatePassed == true) {
+                                Content = 'Friendly reminder: your royalty payment is overdue. Please contact your administrator if you need assistance.';
+                            }
+
+                            // Create and show modal
+                            var modalHtml = '<div class="modal" id="royaltyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
+                                '<div class="modal-dialog modal-dialog-center">' +
+                                    '<div class="modal-content">' +
+                                        '<div class="" style="margin: 5px; font-size: 17px;">' +
+                                            '<div class="panel panel-default" style="border: 1px solid #ddd; border-radius: 4px; margin-bottom: 0;">' +
+                                                '<div class="panel-body well-sm-tiny" style="padding: 0px;">' +
+                                                    '<div class="row-fluid div-margin">' +
+                                                        '<div class="col-sm-12">' +
+                                                            '<div class="div-margin textCenter" style="padding: 30px;">' +
+                                                                '<div class="div-margin" style="color: Red;">' +
+                                                                    'Attention Required' +
+                                                                '</div>' +
+                                                              Content +
+
+                                                            '</div>' +
+                                                        '</div>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                                '<div class="panel-footer" style="background-color: #f5f5f5; border-top: 1px solid #ddd; padding: 15px 0; margin-top: 10px;">' +
+                                                    '<div class="row-fluid text-center">' +
+                                                        (isDatePassed ?
+                            // If due date has passed, only show Pay Now button
+                                                        '<div class="col-sm-4"></div>' +
+                                                        '<div class="col-sm-4">' +
+                                                        '<a class="btn btn-primary btn-block btn-lg active btn-style-3" href="Reports/RoyaltyProformaInvoices.aspx">Check Estimate</a>' +
+                                                        '</div>' +
+                                                        '<div class="col-sm-4"></div>' :
+                            // Otherwise show both Pay Now and Skip buttons
+                                                        '<div class="col-sm-4 text-right" style="padding-top: 9px;">' +
+                                                        '<a href="javascript:void(0);" onclick="$(\'#royaltyModal\').modal(\'hide\');" style="padding-top: 10px; padding-left: 20px;">Skip</a>' +
+                                                        '</div>' +
+                                                        '<div class="col-sm-4">' +
+                                                        '<a class="btn btn-primary btn-block btn-lg active btn-style-3" href="Reports/RoyaltyProformaInvoices.aspx">Check Estimate</a>' +
+                                                        '</div>' +
+                                                        '<div class="col-sm-4"></div>') +
+                                                    '</div>' +
+                                                '</div>' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>';
+
+                            // Add modal to body if not exists
+                            if (!$('#royaltyModal').length) {
+                                $('body').append(modalHtml);
+                            }
+
+                            // Show modal with same configuration as order overdue popup
+                            $('#royaltyModal').modal({
+                                backdrop: 'static',
+                                keyboard: false
+                            });
+                        }
+                    }
+                },
+                error: function (result) {
+                    console.error("Error checking royalty invoices:", result);
+                }
+            });
+        }
+        function GetOrderWiseLicenseData() {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                url: 'WebServices.asmx/GetOrderWiseLicenseData',
+                dataType: "JSON",
+                success: function (response) {
+                    var Result = JSON.parse(response.d);
+                    if (Result && Result.IsOrderWiseLicense === true) {
+                        // Show the order count display
+                        $('#divOrderCount').show();
+
+                        // Update the order count text
+                        var orderText = 'Orders: ' + Result.RemainingOrderCount;
+
+                        if (Result.RemainingOrderCount === 0) {
+                            orderText = 'No Orders Left';
+                            // Change color to red when no orders left
+                            $('#divOrderCount i').css('color', '#ff0000');
+                            $('#divOrderCountText').css('color', '#ff0000');
+                        }
+
+                        $('#divOrderCountText').text(orderText);
+                    } else {
+                        // Hide the order count display if not order-wise license
+                        $('#divOrderCount').hide();
+                    }
+                },
+                error: function (result) {
+                    console.error("Error getting order wise license data:", result);
+                    // Hide the display on error
+                    $('#divOrderCount').hide();
+                }
+            });
+        }
+        function CheckRoyaltyEnable() {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                url: 'WebServices.asmx/CheckRoyaltyEnable',
+                async: false,
+                dataType: "JSON",
+                success: function (response) {
+                    var Result = response.d.trim();
+                    if (Result.toUpperCase() == "TRUE") {
+                        CheckPendingRoyaltyInvoices();
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            var height = window.innerHeight;
+            height = (height - 2) + 'px';
+            $("#divSubMenu").css("height", height);
+            $(".nav_new").css("height", height);
+
+            var d = new Date($.now());
+            var time = d.getDay() + "-" + d.getMonth() + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+            time = '?ClearContent=' + time;
+            $('#achrNewDashboard').attr('href', ($('#achrNewDashboard').attr('href') + time));
+            $('#achrNewCustomer').attr('href', ($('#achrNewCustomer').attr('href') + time));
+            $('#achrOrderReport').attr('href', ($('#achrOrderReport').attr('href') + time));
+            $('#achrSetup').attr('href', ($('#achrSetup').attr('href') + time));
+            $('#achrDailyDashboard').attr('href', ($('#achrDailyDashboard').attr('href') + time));
+            $('#achrHome').attr('href', ($('#achrHome').attr('href') + time));
+            $('#achrChangePwd').attr('href', ($('#achrChangePwd').attr('href') + time));
+
+            // Order Refill button click handler
+            $('#btnOrderCount').on('click', function(e) {
+                e.preventDefault();
+                $('#orderLimitModal').modal('show');
+            });
+
+        });
+        $(function () {
+            $(document).ajaxError(
+        function (e, xhr, settings) {
+            var IsLogout = false;
+            if (xhr.status != 401) {
+
+                ErrorResText = xhr.responseText;
+                if (ErrorResText != '') {
+                    if (ErrorResText.indexOf('HttpContext.Current.Session') > 0) {
+                        IsLogout = true;
+                    }
+                    if (ErrorResText.indexOf('get_BranchID()') > 0) {
+                        IsLogout = true;
+                    }
+                }
+            }
+
+            if (xhr.status == 401 || IsLogout == true) {
+                alert("You're being timed out due to inactivity, please login again.");
+                var _meLoc = window.location + '';
+                var _index = _meLoc.toLowerCase().indexOf('app');
+                var _baseUrl = _meLoc.slice(0, _index - 1);
+                _index = _baseUrl.lastIndexOf('/');
+                _baseUrl = _meLoc.slice(0, _index);
+                window.open(_baseUrl + '/Login.aspx', '_self');
+                return false;
+            }
+        });
+
+        });
+    </script>
+    <script type="text/javascript">        window.ZohoHCAsap = window.ZohoHCAsap || function (a, b) { ZohoHCAsap[a] = b; }; (function () { var d = document; var s = d.createElement("script"); s.type = "text/javascript"; s.defer = true; s.src = "https://desk.zoho.com/portal/api/web/inapp/382685000000313161?orgId=686975232"; d.getElementsByTagName("head")[0].appendChild(s); })(); </script>
+    <script type="text/javascript">
+        function GetIsPickupBuzzerEnabledData() {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                url: 'WebServices.asmx/GetIsPickupBuzzerEnabled',
+                dataType: "JSON",
+                success: function (response) {
+                    var Result = JSON.parse(response.d.trim());
+                    var IsPickupBuzzerEnabled = Boolean(Result[0].IsPickupBuzzerEnabled);
+                    if (IsPickupBuzzerEnabled == true) {
+                        var script = document.createElement('script');
+                        script.src = 'https://qdc-static-assets.s3.ap-south-1.amazonaws.com/pickup-notifications/main.js';
+                        script.defer = true;
+                        script.onload = initializeConnection;
+                        document.head.appendChild(script);
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+        function initializeConnection() {
+            var _meLoc = window.location + '';
+            var _index = _meLoc.toLowerCase().indexOf('app');
+            var _baseUrl = _meLoc.slice(0, _index - 1);
+            var aryData = _baseUrl.split('/');
+            var storeCode = aryData[aryData.length - 1]
+            setTimeout(function () {
+                window.pickupNotifications.connect(storeCode);
+            }, 1500);
+        }
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QETYYCYD8D"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-QETYYCYD8D');
+    </script>
+</body>
+</html>
